@@ -4,6 +4,40 @@ This is an official pnpm starter turborepo.
 
 ## What's inside?
 
+Gitcoin Dashboard for grantees.
+Gitcoin grant round for this Dashboard https://explorer.gitcoin.co/#/round/10/0xa20a0fdec6506667e90668300b0c88d9ae8670ae
+
+Available: https://gitcoin-grant-dashboard.wuw-whateveryouwant.xyz
+
+The dashboard:
+
+Send project grant round information.
+Receive a list of donors with the amount, address, ens name, votes number, and date.
+Get round application details.
+
+TODO:
+Would love to have more, filter by amount, data, votes.
+Grantees dashboard for donors.
+Rounds pages.
+
+Let me know what you want!
+
+Build by :  https://twitter.com/MSG_Encrypted
+Founder of : https://twitter.com/WUW_WhtevrUWant
+
+
+
+# Eligibility Requirements:
+1. User can enter project ID via a text box
+2. When valid project ID is entered, the dashboard returns the following data:
+- List of donors (by wallet address and ENS if available) 
+- Amount of donation (native token and USD equivalent) 
+- Which round the donation occurred in (text/name) 
+- Date of donation
+
+3. If invalid project ID entered, display error state
+4. This dashboard should be maintained for the next 30 days. Possibility of extending with coordination w Gitcoin team. Gitcoin team is able to promote and send this dashboard around where helpful to the community.
+
 This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes the following packages/apps:
 
 ### Apps and Packages
