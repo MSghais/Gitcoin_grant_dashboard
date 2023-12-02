@@ -1,0 +1,35 @@
+{
+  "name": "gitcoin_grant_dashboard",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "prisma": {
+    "schema": "packages/db_mongo/prisma/schema.prisma",
+    "seed": "tsx packages/db_mongo/src/seed.ts"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "postinstall": "prisma generate",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean && rimraf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:migrate:deploy": "turbo run db:migrate:deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:push": "turbo run db:push",
+    "db:seed": "turbo run db:seed",
+    "generate": "turbo run generate"
+  },
+  "devDependencies": {
+    "eslint-config-custom": "workspace:*",
+    "prettier": "^2.8.8",
+    "turbo": "^1.10.15"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "packageManager": "pnpm@7.21.0"
+}
