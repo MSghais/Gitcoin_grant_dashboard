@@ -156,12 +156,16 @@ export default function FooterLarge() {
           gap={{ md: "15%" }}
           justifyItems={"stretch"}
         >
-          <Box textAlign={"center"}>
+          <Box textAlign={{ base: "left", md: "center" }}>
             <Box display={"flex"} gap="0.5em">
               <Text>You can buy us a coffee</Text>
               <BiCoffee></BiCoffee>
             </Box>
-            <Box display={{ md: "flex" }} gap="0.5em">
+            <Box
+              display={{ md: "flex" }}
+              gap="0.5em"
+              textAlign={{ base: "left", md: "center" }}
+            >
               <Text>Send it here:</Text>
               <Text>0x26d27D784aed2a6d1b4C24f63846a17be899ef2d</Text>
             </Box>
@@ -194,13 +198,13 @@ export default function FooterLarge() {
 
             <Text textAlign={{ base: "left", md: "center" }}>
               {" "}
-              {CONFIG_WEBSITE.title} - © {new Date().getFullYear()}. All rights
-              reserved
+              Made by {CONFIG_WEBSITE.title} - © {new Date().getFullYear()}.
             </Text>
+            <Text>Gitcoin grant lover</Text>
           </Stack>
           <Box justifyContent={"center"} paddingTop={"1em"}>
             <Text textAlign={{ base: "left", md: "center" }}>
-              Social WUW community
+              Socials link of WUW community
             </Text>
             <Stack
               direction={"row"}

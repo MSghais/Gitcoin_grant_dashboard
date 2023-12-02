@@ -28,23 +28,58 @@ const CONFIG_GITCOIN = {
 interface MyPageProps {
   grants: Grant[];
 }
+interface IStatsRounds {
+  totalUSD?: number;
+  totalETH?: number;
+  totalVotes?: number;
+  totalContributors?: number;
+}
+
+interface IRoundDetails {
+  title?: string;
+  address?: string;
+  description?: string;
+}
 const Home: NextPage<MyPageProps> = ({ grants }) => {
   const toast = useToast();
   const [signer, setSigner] = useState<providers.JsonRpcSigner | undefined>();
   const [chainId, setChainId] = useState<number | undefined>();
   const [roundAddress, setRoundAddress] = useState<string | undefined>();
   const [urlRoundProject, setUrlRoundProject] = useState<string | undefined>();
+  const [isDataStatsCalculated, setIsDataStatsCalculate] =
+    useState<boolean>(false);
+  const [donors, setDonors] = useState<Donors[]>();
   const [selectApplicationId, setApplicationId] = useState<
     string | undefined
   >();
+  const [statsRound, setStatsRound] = useState<IStatsRounds | undefined>();
+
+  useEffect(() => {
+    const calculateStats = () => {
+      let totalUSD = 0;
+      let votes = 0;
+      donors.map((d, i) => {
+        totalUSD += d?.amountUSD;
+        votes += d?.votes;
+      });
+
+      setStatsRound({
+        totalUSD: totalUSD,
+        totalVotes: votes,
+        totalContributors: donors?.length,
+      });
+    };
+
+    if (donors && donors.length > 0 && !isDataStatsCalculated) {
+      calculateStats();
+    }
+  }, [isDataStatsCalculated, donors]);
   const color = useColorModeValue("gray.900", "gray.300");
   const selectChangeEvent = (value: string) => {
     console.log("selectChangeEvent");
     console.log("value", value);
     setChainId(Number(value));
   };
-
-  const [donors, setDonors] = useState<Donors[]>();
 
   const selectRoundAddress = (value: string) => {
     console.log("selectRoundAddress");
@@ -121,10 +156,23 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
       >
         <Text
           fontFamily={"PressStart2P"}
-          fontSize={{ base: "19px", md: "23px", lg: "27px" }}
+          fontSize={{ base: "19px", md: "21px", lg: "23px" }}
         >
-          Gitcoin donors Beta 👋
+          Gitcoin donors Dashboard Beta 👋
         </Text>
+        <Text
+          fontFamily={"PressStart2P"}
+          fontSize={{ base: "13px", md: "15px", lg: "17px" }}
+        >
+          Here you can find :
+        </Text>
+        <Text
+          fontFamily={"monospace"}
+          fontSize={{ base: "13px", md: "15px", lg: "17px" }}
+        >
+          Donors of a Gitcoin round by project.
+        </Text>
+        
         <Box
           display={{ lg: "flex" }}
           justifyContent={"space-evenly"}
@@ -179,8 +227,10 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             <Button onClick={handleGetData}>Get donors</Button>
           </Box>
 
-          <Box>
-            <Text fontFamily={"PressStart2P"}>OR:</Text>
+          <Box p={{ base: "0.5em" }}>
+            <Text fontFamily={"PressStart2P"} textAlign={{ base: "center" }}>
+              OR:
+            </Text>
           </Box>
 
           <Box borderRadius="lg" boxShadow={"xl"} gap="1em">
@@ -203,9 +253,27 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           </Box>
         </Box>
 
-        <Text fontFamily={"PressStart2P"}>
-          Here you can find : Donors of a Gitcoin round by project.
-        </Text>
+      
+
+        {statsRound && (
+          <Box
+            textAlign={"left"}
+            boxShadow={"2xl"}
+            borderRadius="lg"
+            gap="1em"
+            p={{ base: "0.5em", md: "1em" }}
+          >
+            <Text
+              fontFamily={"PressStart2P"}
+              fontSize={{ base: "13px", md: "15px", lg: "17px" }}
+            >
+              Stats round data
+            </Text>
+            <Text>Total USD: {statsRound?.totalUSD}</Text>
+            <Text>Contributors: {statsRound?.totalContributors}</Text>
+            {/* <Text>Total votes: {statsRound?.totalVotes}</Text> */}
+          </Box>
+        )}
 
         <Box
           gap={{ base: "0.5em" }}
