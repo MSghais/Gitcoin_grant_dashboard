@@ -10,6 +10,14 @@ import {
   useToast,
   Input,
   Select,
+  TableContainer,
+  Table,
+  Tr,
+  Thead,
+  Th,
+  Tbody,
+  Td,
+  Card,
 } from "@chakra-ui/react";
 import axios from "axios";
 import HeaderSEO from "../components/HeaderSEO";
@@ -95,6 +103,11 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
     try {
       console.log("handleGetData");
       console.log("get data");
+
+      const allRounds = await axios.get(
+        "https://grants-stack-indexer.gitcoin.co/data/10/rounds/"
+      );
+      console.log("allRounds", allRounds);
       if (chainId && roundAddress && selectApplicationId) {
         const res = await axios.get(
           `https://grants-stack-indexer.gitcoin.co/data/${chainId}/rounds/${roundAddress}/applications/${selectApplicationId}/contributors.json`
@@ -172,7 +185,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
         >
           Donors of a Gitcoin round by project.
         </Text>
-        
+
         <Box
           display={{ lg: "flex" }}
           justifyContent={"space-evenly"}
@@ -253,8 +266,6 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           </Box>
         </Box>
 
-      
-
         {statsRound && (
           <Box
             textAlign={"left"}
@@ -269,12 +280,50 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             >
               Stats round data
             </Text>
-            <Text>Total USD: {statsRound?.totalUSD}</Text>
-            <Text>Contributors: {statsRound?.totalContributors}</Text>
+            {/* <Text>Total USD: {statsRound?.totalUSD}</Text>
+            <Text>Contributors: {statsRound?.totalContributors}</Text> */}
+
+            <Box display={"flex"} gap="1em">
+              <Card>
+                <Text>Total USD: {statsRound?.totalUSD}</Text>
+              </Card>
+              <Card>
+                <Text>Contributors: {statsRound?.totalContributors}</Text>
+              </Card>
+            </Box>
             {/* <Text>Total votes: {statsRound?.totalVotes}</Text> */}
           </Box>
         )}
 
+        <Text textAlign={"left"}>
+          Contributors: {statsRound?.totalContributors}
+        </Text>
+
+        <TableContainer>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Address</Th>
+                <Th>Total USD</Th>
+                {/* <Th isNumeric>multiply by</Th> */}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {donors &&
+                donors?.length > 0 &&
+                donors.map((d, i) => {
+                  return (
+                    <Tr key={i}>
+                      <Td>{d?.id}</Td>
+                      <Td>{d?.amountUSD}</Td>
+                      {/* <Td isNumeric>25.4</Td> */}
+                    </Tr>
+                  );
+                })}
+            </Tbody>
+          </Table>
+        </TableContainer>
+{/* 
         <Box
           gap={{ base: "0.5em" }}
           display={"grid"}
@@ -285,7 +334,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             donors.map((d, i) => {
               return <DonorsView donor={d} index={i} />;
             })}
-        </Box>
+        </Box> */}
       </Box>
     </>
   );
