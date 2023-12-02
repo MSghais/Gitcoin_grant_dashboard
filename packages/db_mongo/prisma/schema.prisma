@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL_MONGODB")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+
+model Grantees {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId // Use String as the ID type
+  name               String?
+  owner String?
+  wallet String?
+  totalDonors Int?
+  totalEth Int?
+ 
+}
+
+model Donors {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId // Use String as the ID type
+  wallet               String?
+  totalDonorsEth Int?
+  countDonoations Int?
+
+}

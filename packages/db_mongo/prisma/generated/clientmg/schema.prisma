@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+  // referentialIntegrity = "prisma"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  output   = "./generated/clientmg"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+model Post {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  text      String?
+  createdAt DateTime?
+  updatedAt DateTime?
+  content   String?
+  published Boolean   @default(false)
+  userId  String @db.ObjectId
+  author    User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  posts         Post[]
+  // profile       Profile?
+}
+
+// model Post {
+//   id     String @id @default(auto()) @map("_id") @db.ObjectId
+//   title  String
+//   userId String @db.ObjectId
+//   user   User   @relation(fields: [userId], references: [id])
+// }
+
+// model User {
+//   id    String @id @default(auto()) @map("_id") @db.ObjectId
+//   email String
+//   posts Post[]
+// }
+
+// model Profile {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
+//   bio    String?
+//   // userId Int  
+//   // userId Int     @db.ObjectId @unique
+//   // userId String @id @default(auto()) @map("_id") @db.ObjectId
+
+//   user   User    @relation(fields: [User.id], references: [id])
+// }
+
+model FeedRss {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String?
+  name        String?
+  description String?
+  img_url     String?
+  // content     String?
+  pubDate     String?
+  media       String?
+  categories  String[] @default([])
+  link        String?
+  source        String?
+}
+
+model RssNews {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String?
+  name        String?
+  description String?
+  img_url     String?
+  // content     String?
+  pubDate     String?
+  media       String?
+  categories  String[] @default([])
+  link        String?  @unique
+  source        String?
+}

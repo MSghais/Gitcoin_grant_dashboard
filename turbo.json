@@ -1,0 +1,95 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "NODE_ENV",
+    "EMAIL_PROVIDER",
+    "EMAIL_ADDRESS_FROM",
+    "PASSWORD_EMAIL",
+    "EMAIL_ADDRESS_TO",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "WORKFLOW",
+    "BUCKET_NAME",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_KEY_ID",
+    "AWS_REGION",
+    "USE_AWS",
+    "EMAIL_PASSWORD_CADEAU",
+    "EMAIL_ADDRESS_CADEAU_FROM",
+    "DB_URL_MONGODB",
+    "TWITTER_CALLBACK_URL",
+    "TWITTER_API_KEY",
+    "TWITTER_API_SECRET_KEY",
+    "TWITTER_CLIENT_ID",
+    "TWITTER_CLIENT_SECRET",
+    "TWITTER_ACCESS_TOKEN",
+    "TWITTER_ACCESS_SECRET_TOKEN",
+    "TWITTER_BEARER_TOKEN",
+    "ENCRYPTION_KEY",
+    "NEXT_PUBLIC_HUDDLE_API_KEY",
+    "NEXT_PUBLIC_HUDDLE_PROJECT_ID",
+    "NEXT_PUBLIC_WALLET_CONNECT_ID",
+    "NEXT_PUBLIC_GOOGLE_ANALYTICS",
+    "PINATA_API_KEY",
+    "PINATA_API_SECRET_KEY",
+    "PINATA_JWT",
+    "LAUCHING_FACTORY",
+    "PINATA_GATEWAY_KEY",
+    "NEXT_PUBLIC_PINATA_JWT",
+    "APP_URL",
+    "NEXT_PUBLIC_APP_URL",
+    "DISCORD_CLIENT_ID",
+    "DISCORD_CLIENT_SECRET",
+    "NEXTAUTH_SECRET"
+  ],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"],
+      "env": [
+        "DB_URL_MONGODB",
+        "PINATA_API_KEY",
+        "PINATA_API_SECRET_KEY",
+        "PINATA_JWT",
+        "LAUCHING_FACTORY",
+        "PINATA_GATEWAY_KEY",
+        "NEXT_PUBLIC_APP_URL"
+      ]
+    },
+    "run": {
+      "env": [
+        "DB_URL_MONGODB",
+        "PINATA_API_KEY",
+        "PINATA_API_SECRET_KEY",
+        "PINATA_JWT",
+        "LAUCHING_FACTORY",
+        "PINATA_GATEWAY_KEY",
+        "NEXT_PUBLIC_PINATA_JWT",
+        "APP_URL"
+
+      ]
+    },
+    "db:migrate:deploy": {},
+    "db:seed": {},
+    "db:generate": {
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
+    "lint": {
+      "outputs": []
+    },
+    "generate": {
+      "dependsOn": ["^generate"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}
