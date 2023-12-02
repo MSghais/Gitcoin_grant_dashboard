@@ -116,7 +116,9 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
 
       console.log("allRounds", allRounds);
       if (chainId && roundAddress && selectApplicationId) {
-        const findRoundAddress = allRounds?.find((r) => r?.id == roundAddress);
+        const findRoundAddress = allRounds?.find((r) => r?.id == roundAddress
+        ||  r?.id?.toLowerCase() == roundAddress?.toLowerCase()
+        );
 
         if (!findRoundAddress) {
           return toast({
@@ -125,7 +127,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           });
         }
         const res = await axios.get(
-          `https://grants-stack-indexer.gitcoin.co/data/${chainId}/rounds/${roundAddress}/applications/${selectApplicationId}/contributors.json`
+          `https://grants-stack-indexer.gitcoin.co/data/${chainId}/rounds/${findRoundAddress?.id ?? roundAddress}/applications/${selectApplicationId}/contributors.json`
         );
         console.log("res", res);
         setDonors(res?.data);
