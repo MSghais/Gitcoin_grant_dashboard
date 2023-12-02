@@ -267,10 +267,11 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
         </Box>
 
         {statsRound && (
-          <Box
+          <Card
             textAlign={"left"}
             boxShadow={"2xl"}
             borderRadius="lg"
+            borderColor={"brand.primary"}
             gap="1em"
             p={{ base: "0.5em", md: "1em" }}
           >
@@ -292,7 +293,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
               </Card>
             </Box>
             {/* <Text>Total votes: {statsRound?.totalVotes}</Text> */}
-          </Box>
+          </Card>
         )}
 
         <Text textAlign={"left"}>
