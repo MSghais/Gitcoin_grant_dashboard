@@ -7,6 +7,8 @@ interface ProjectState {
   selectedGrant: Grant
   allGrant: Grant[];
   totalCount: number;
+  votes?:number;
+  totalUSD?:number;
 
 }
 

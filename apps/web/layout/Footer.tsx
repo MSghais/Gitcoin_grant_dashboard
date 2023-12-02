@@ -23,7 +23,7 @@ import {
 
 import { ReactNode } from "react";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
-import { BiMailSend } from "react-icons/bi";
+import { BiCoffee, BiMailSend } from "react-icons/bi";
 import Link from "next/link";
 import React from "react";
 import { MdEmail, MdPhone, MdWeb } from "react-icons/md";
@@ -50,20 +50,12 @@ export const Footer = (props: any) => {
       p={8}
       {...props}
     >
-      <Flex align="center">
-   
-      </Flex>
+      <Flex align="center"></Flex>
 
-      <Box display={{ base: "block", md: "none" }} onClick={toggleMenu}>
-      </Box>
+      <Box display={{ base: "block", md: "none" }} onClick={toggleMenu}></Box>
 
-      <Box
-        display={{ base: "block" }}
-        flexBasis={{ base: "100%", md: "auto" }}
-      >
-        <Flex
-  
-        >
+      <Box display={{ base: "block" }} flexBasis={{ base: "100%", md: "auto" }}>
+        <Flex>
           <Link
             target={"_blank"}
             passHref
@@ -97,9 +89,7 @@ const Logo = (args: ILogoProps) => {
       viewBox="0 0 120 28"
       xmlns="http://www.w3.org/2000/svg"
       {...args.props}
-    >
-
-    </svg>
+    ></svg>
   );
 };
 
@@ -166,6 +156,16 @@ export default function FooterLarge() {
           gap={{ md: "15%" }}
           justifyItems={"stretch"}
         >
+          <Box textAlign={"center"}>
+            <Box display={"flex"} gap="0.5em">
+              <Text>You can buy us a coffee</Text>
+              <BiCoffee></BiCoffee>
+            </Box>
+            <Box display={{ md: "flex" }} gap="0.5em">
+              <Text>Send it here:</Text>
+              <Text>0x26d27D784aed2a6d1b4C24f63846a17be899ef2d</Text>
+            </Box>
+          </Box>
           <Stack
             alignItems={{ sm: "center", md: "flex-start" }}
             paddingTop={"1em"}
@@ -185,13 +185,10 @@ export default function FooterLarge() {
                 alignContent={"center"}
               >
                 <IconComponent
-             
                   src="/assets/WUW_logo_title.svg"
-
                   alt="ToolFi Bot"
                   size="150px"
                 />
-       
               </Box>
             </Stack>
 
@@ -220,7 +217,6 @@ export default function FooterLarge() {
               >
                 <MdWeb></MdWeb>
               </SocialButton>
-
 
               <SocialButton
                 isExternal={true}
