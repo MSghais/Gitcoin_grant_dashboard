@@ -103,12 +103,27 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
     try {
       console.log("handleGetData");
       console.log("get data");
+      let allRounds = [];
+      // const allRounds = await axios.get(
+      //   "https://grants-stack-indexer.gitcoin.co/data/10/rounds/"
+      // );
+      if (chainId) {
+        const res = await axios.get(
+          `https://grants-stack-indexer.gitcoin.co/data/${chainId}/rounds.json`
+        );
+        allRounds = res?.data;
+      }
 
-      const allRounds = await axios.get(
-        "https://grants-stack-indexer.gitcoin.co/data/10/rounds/"
-      );
       console.log("allRounds", allRounds);
       if (chainId && roundAddress && selectApplicationId) {
+        const findRoundAddress = allRounds?.find((r) => r?.id == roundAddress);
+
+        if (!findRoundAddress) {
+          return toast({
+            title: "Round address not find. Very upper and lower case.",
+            status: "error",
+          });
+        }
         const res = await axios.get(
           `https://grants-stack-indexer.gitcoin.co/data/${chainId}/rounds/${roundAddress}/applications/${selectApplicationId}/contributors.json`
         );
@@ -119,6 +134,28 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
         });
       }
 
+    } catch (e) {
+      console.log("handleGetData error", e);
+
+      if (e?.response?.status == 400) {
+        toast({
+          title: "Not find",
+          status: "error",
+        });
+      }
+    }
+  };
+
+
+  const handleUrlGetData = async () => {
+    try {
+      console.log("handleGetData");
+      console.log("get data");
+      let allRounds = [];
+      // const allRounds = await axios.get(
+      //   "https://grants-stack-indexer.gitcoin.co/data/10/rounds/"
+      // );
+  
       /** TODO url finding */
       if (urlRoundProject) {
         let url = urlRoundProject;
@@ -129,15 +166,32 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
         console.log("chainIdString", chainIdString);
         console.log("applicationId", applicationId);
         console.log("address", address);
-        url = url.replace("https://explorer.gitcoin.co/#/", "");
         console.log("url", url);
 
         if (address && applicationId && chainIdString) {
-          // const res = await axios.get(
-          //   `https://grants-stack-indexer.gitcoin.co/data/${chainIdString}/rounds/${address}/applications/${address}-${applicationId}/contributors.json`
-          // );
+          if (chainIdString) {
+            
+            const res = await axios.get(
+              `https://grants-stack-indexer.gitcoin.co/data/${Number(chainIdString)}/rounds.json`
+            );
+            console.log("allRounds url", res?.data);
+
+            allRounds = res?.data;
+          }
+          const findRoundAddress = allRounds?.find(
+            (r) =>
+              r?.id == roundAddress 
+              ||  r?.id?.toLowerCase() == roundAddress?.toLowerCase()
+          );
+
+          if (!findRoundAddress) {
+            return toast({
+              title: "Round address not find. Very upper and lower case.",
+              status: "error",
+            });
+          }
           const res = await axios.get(
-            `https://grants-stack-indexer.gitcoin.co/data/${chainIdString}/rounds/${address.toUpperCase()}/applications/${applicationId}/contributors.json`
+            `https://grants-stack-indexer.gitcoin.co/data/${chainIdString}/rounds/${findRoundAddress?.id}/applications/${applicationId}/contributors.json`
           );
           console.log("res", res);
           setDonors(res?.data);
@@ -148,6 +202,13 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
       }
     } catch (e) {
       console.log("handleGetData error", e);
+
+      if (e?.response?.status == 400) {
+        toast({
+          title: "Not find",
+          status: "error",
+        });
+      }
     }
   };
   return (
@@ -260,7 +321,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             <Text>Please verify: </Text>
             <Text>The exact round address with Lower and Uppercase</Text>
 
-            <Button p={{ base: "0.5em" }} onClick={handleGetData}>
+            <Button p={{ base: "0.5em" }} onClick={handleUrlGetData}>
               Check url grant
             </Button>
           </Box>
@@ -324,7 +385,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             </Tbody>
           </Table>
         </TableContainer>
-{/* 
+        {/* 
         <Box
           gap={{ base: "0.5em" }}
           display={"grid"}
