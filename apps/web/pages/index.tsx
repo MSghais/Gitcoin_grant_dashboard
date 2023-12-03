@@ -112,6 +112,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           `https://grants-stack-indexer.gitcoin.co/data/${chainId}/rounds.json`
         );
         allRounds = res?.data;
+
       }
 
       console.log("allRounds", allRounds);
@@ -182,18 +183,20 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           }
           const findRoundAddress = allRounds?.find(
             (r) =>
-              r?.id == roundAddress 
-              ||  r?.id?.toLowerCase() == roundAddress?.toLowerCase()
+              r?.id == address 
+              ||  r?.id?.toLowerCase() == address?.toLowerCase()
+              ||  r?.id?.toUpperCase() == address?.toUpperCase()
           );
-
-          if (!findRoundAddress) {
+          console.log('findRoundAddress',findRoundAddress)
+          if (!findRoundAddress?.id && allRounds?.length>0) {
             return toast({
               title: "Round address not find. Very upper and lower case.",
               status: "error",
             });
           }
+          // console.log("0xc34745b3852df32d5958be88df2bee0a83474001")
           const res = await axios.get(
-            `https://grants-stack-indexer.gitcoin.co/data/${chainIdString}/rounds/${findRoundAddress?.id}/applications/${applicationId}/contributors.json`
+            `https://grants-stack-indexer.gitcoin.co/data/${Number(chainIdString)}/rounds/${findRoundAddress?.id}/applications/${applicationId}/contributors.json`
           );
           console.log("res", res);
           setDonors(res?.data);
