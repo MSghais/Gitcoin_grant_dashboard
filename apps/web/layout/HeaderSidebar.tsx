@@ -96,11 +96,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             {...rest}
         >
             <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-         
+
                 <Link href="/"
                 >
                     <IconComponent
-                    
+
                         src="/WUW_pepe_banner.png"
 
                         alt="WUW- Whatever You Want"
@@ -122,7 +122,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
                 {LinkItems.map((link) => (
                     <NavItem
-                     key={link.name}
+                        key={link.name}
                         onClick={onClose}
                         icon={link.icon}
                         href={link.href}
@@ -170,12 +170,12 @@ const SidebarContentMobile = ({ onClose, ...rest }: SidebarProps) => {
             {...rest}
         >
             <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        
+
                 <Link href="/"
                 //  onClick={onClose}
                 >
                     <IconComponent
-                
+
                         src="/assets/wuw_logo.png"
 
                         alt="WUW- Whatever You Want"
@@ -318,7 +318,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                 <Link href="/"
                 >
                     <IconComponent
-              
+
                         src="/assets/WUW_logo_title.svg"
 
                         alt="WUW- Whatever You Want"
@@ -379,7 +379,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
                                 <CustomConnectButtonWallet></CustomConnectButtonWallet>
                             </MenuItem>
-
+                            {/* 
 
                             <MenuItem
                                 as={Box}
@@ -392,7 +392,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                                     href="/my_profile"
                                     title='My profile'
                                 />
-                            </MenuItem>
+                            </MenuItem> */}
                             <MenuDivider />
 
                         </MenuList>
@@ -424,9 +424,9 @@ const HeaderSidebar = ({ children }: IHeaderSidebar) => {
             <SidebarContent
 
 
-                onClose={() => onClose} 
-                display={{ base: 'none', lg: 'block' }} 
-                />
+                onClose={() => onClose}
+                display={{ base: 'none', lg: 'block' }}
+            />
             <Drawer
                 isOpen={isOpen}
                 placement="left"
@@ -444,11 +444,11 @@ const HeaderSidebar = ({ children }: IHeaderSidebar) => {
             {/* mobilenav */}
             <MobileNav onOpen={onOpen} />
             <Box
-             
+
                 ml={{ base: 0, lg: "13em" }}
             >
 
-              
+
                 <Box
                     display={"flex"}
                 >

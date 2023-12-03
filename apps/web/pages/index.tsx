@@ -31,6 +31,8 @@ import { extractParamsRoundGrant } from "../utils/get_params";
 import { FaOrcid } from "react-icons/fa";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { downloadExcel } from "../utils/xlsx";
+import { fetchEnsName } from "@wagmi/core";
+import { DonorRow } from "../components/DonorsRow";
 const CONFIG_GITCOIN = {
   url: "https://grants-stack-indexer.gitcoin.co/data/",
   price: ``,
@@ -64,14 +66,17 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
     string | undefined
   >();
   const [statsRound, setStatsRound] = useState<IStatsRounds | undefined>();
+  const [round, setRound] = useState<IStatsRounds | undefined>();
 
   useEffect(() => {
-    const calculateStats = () => {
+    const calculateStats = async () => {
       let totalUSD = 0;
       let votes = 0;
       donors.map((d, i) => {
         totalUSD += d?.amountUSD;
         votes += d?.votes;
+        // d?.ensName=await getEnsName(d?.id)
+
       });
 
       if (orderSort == "ASC") {
@@ -128,6 +133,8 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
         const findRoundAddress = allRounds?.find((r) => r?.id == roundAddress
           || r?.id?.toLowerCase() == roundAddress?.toLowerCase()
         );
+
+        console.log("findRoundAddress",findRoundAddress)
 
         if (!findRoundAddress) {
           return toast({
@@ -255,10 +262,12 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
     }
   }
 
-  // const getEnsName = (address: string) => {
-  //   let ensName = useEnsName({ address: address as `0x${string}` })
-  //   return ensName?.data
-  // }
+  const getEnsName = async (address: string) => {
+    // let ensName = useEnsName({ address: address as `0x${string}` })
+    let ensName = await fetchEnsName({ address: address as `0x${string}` })
+
+    return ensName?.toString()
+  }
 
   const donorsMemo = useMemo(() => {
 
@@ -303,7 +312,9 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
         >
           Donors of a Gitcoin round by project.
         </Text>
+        <Text
 
+        >Pick the url of your projects.</Text>
         <Box
           display={{ lg: "flex" }}
           justifyContent={"space-evenly"}
@@ -404,17 +415,19 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
               fontFamily={"PressStart2P"}
               fontSize={{ base: "13px", md: "15px", lg: "17px" }}
             >
-              Stats round data
+              Stats project data
             </Text>
             {/* <Text>Total USD: {statsRound?.totalUSD}</Text>
             <Text>Contributors: {statsRound?.totalContributors}</Text> */}
 
             <Box display={"flex"} gap="1em">
               <Card>
-                <Text>Total USD: {statsRound?.totalUSD}</Text>
+                <Text>Total USD: </Text>
+                <Text>{statsRound?.totalUSD?.toFixed(2)}</Text>
               </Card>
               <Card>
-                <Text>Contributors: {statsRound?.totalContributors}</Text>
+                <Text>Contributors: </Text>
+                <Text>{statsRound?.totalContributors}</Text>
               </Card>
             </Box>
             {/* <Text>Total votes: {statsRound?.totalVotes}</Text> */}
@@ -449,7 +462,20 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             <Thead>
               <Tr>
                 <Th>Address</Th>
-                <Th onClick={() => handleOrderSort()}>Total USD {orderSort == "ASC" ? <BiUpArrow></BiUpArrow> : <BiUpArrow></BiUpArrow>}</Th>
+                <Th onClick={() => handleOrderSort()}
+                display={"flex"}
+                >
+
+                  <Box>
+                    Total USD
+                  </Box>
+
+                  <Box>
+                    {orderSort == "ASC" ? <BiUpArrow></BiUpArrow> : <BiUpArrow></BiUpArrow>}
+
+                  </Box>
+
+                </Th>
                 <Th >ENS Name</Th>
               </Tr>
             </Thead>
@@ -457,14 +483,13 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
               {donorsMemo &&
                 donorsMemo?.length > 0 &&
                 donorsMemo.map((d, i) => {
-                  // let ensName=getEnsName(d?.id)
+                  // let ensName= getEnsName(d?.id)
                   // console.log("ensName", ensName)
                   return (
-                    <Tr key={i}>
-                      <Td>{d?.id}</Td>
-                      <Td>{d?.amountUSD}</Td>
-                
-                    </Tr>
+                    <DonorRow
+                    d={d}
+                    i={i}
+                    ></DonorRow>
                   );
                 })}
             </Tbody>
