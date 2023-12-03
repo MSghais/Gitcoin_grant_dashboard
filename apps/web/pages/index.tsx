@@ -1,6 +1,6 @@
 import type { GetServerSideProps, NextPage, NextPageContext } from "next";
 import Head from "next/head";
-import { useEffect, useState, useRef, ChangeEvent } from "react";
+import { useEffect, useState, useRef, ChangeEvent, useMemo } from "react";
 import {
   Box,
   Button,
@@ -29,6 +29,8 @@ import { Donors, Grant } from "../types";
 import DonorsView from "../components/donors";
 import { extractParamsRoundGrant } from "../utils/get_params";
 import { FaOrcid } from "react-icons/fa";
+import { BiDownArrow, BiUpArrow } from "react-icons/bi";
+import { downloadExcel } from "../utils/xlsx";
 const CONFIG_GITCOIN = {
   url: "https://grants-stack-indexer.gitcoin.co/data/",
   price: ``,
@@ -54,6 +56,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
   const [chainId, setChainId] = useState<number | undefined>();
   const [roundAddress, setRoundAddress] = useState<string | undefined>();
   const [urlRoundProject, setUrlRoundProject] = useState<string | undefined>();
+  const [orderSort, setOrderSort] = useState<string | undefined>("ASC");
   const [isDataStatsCalculated, setIsDataStatsCalculate] =
     useState<boolean>(false);
   const [donors, setDonors] = useState<Donors[]>();
@@ -118,7 +121,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
       console.log("allRounds", allRounds);
       if (chainId && roundAddress && selectApplicationId) {
         const findRoundAddress = allRounds?.find((r) => r?.id == roundAddress
-        ||  r?.id?.toLowerCase() == roundAddress?.toLowerCase()
+          || r?.id?.toLowerCase() == roundAddress?.toLowerCase()
         );
 
         if (!findRoundAddress) {
@@ -158,7 +161,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
       // const allRounds = await axios.get(
       //   "https://grants-stack-indexer.gitcoin.co/data/10/rounds/"
       // );
-  
+
       /** TODO url finding */
       if (urlRoundProject) {
         let url = urlRoundProject;
@@ -173,7 +176,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
 
         if (address && applicationId && chainIdString) {
           if (chainIdString) {
-            
+
             const res = await axios.get(
               `https://grants-stack-indexer.gitcoin.co/data/${Number(chainIdString)}/rounds.json`
             );
@@ -183,12 +186,12 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           }
           const findRoundAddress = allRounds?.find(
             (r) =>
-              r?.id == address 
-              ||  r?.id?.toLowerCase() == address?.toLowerCase()
-              ||  r?.id?.toUpperCase() == address?.toUpperCase()
+              r?.id == address
+              || r?.id?.toLowerCase() == address?.toLowerCase()
+              || r?.id?.toUpperCase() == address?.toUpperCase()
           );
-          console.log('findRoundAddress',findRoundAddress)
-          if (!findRoundAddress?.id && allRounds?.length>0) {
+          console.log('findRoundAddress', findRoundAddress)
+          if (!findRoundAddress?.id && allRounds?.length > 0) {
             return toast({
               title: "Round address not find. Very upper and lower case.",
               status: "error",
@@ -199,6 +202,9 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             `https://grants-stack-indexer.gitcoin.co/data/${Number(chainIdString)}/rounds/${findRoundAddress?.id}/applications/${applicationId}/contributors.json`
           );
           console.log("res", res);
+
+          const donorsAnswer: Donors[] = res?.data
+
           setDonors(res?.data);
           toast({
             title: "Grant donors fetch",
@@ -216,6 +222,30 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
       }
     }
   };
+
+  const handleOrderSort = () => {
+    if (orderSort == "ASC") {
+      setOrderSort("ASC")
+      const orderDonors = donors?.sort((a, b) => b?.amountUSD < a?.amountUSD ? -1 : 1)
+      // a[prop] < b[prop] ? -1 : 1
+      console.log('ordersDonors', orderDonors)
+      setDonors(orderDonors)
+    } else {
+      const orderDonors = donors?.sort((a, b) => b?.amountUSD > a?.amountUSD ? -1 : 1)
+      console.log('ordersDonors', orderDonors)
+      setDonors(orderDonors)
+      setOrderSort("DESC")
+    }
+  }
+
+  const donorsMemo = useMemo(() => {
+
+    return donors
+  }, [donors, orderSort])
+
+  useEffect(() => console.log("re-render because x changed:",), [donors])
+
+  console.log("donorsMemo", donorsMemo)
   return (
     <>
       <HeaderSEO></HeaderSEO>
@@ -261,6 +291,36 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           minH={{ sm: "30vh" }}
           color={color}
         >
+
+          <Box borderRadius="lg" boxShadow={"xl"} gap="1em">
+            <Text>Add url of your round project:</Text>
+
+            <Input
+              placeholder="https://explorer.gitcoin.co/#/round/10/0xc34745b3852df32d5958be88df2bee0a83474001/0xc34745b3852df32d5958be88df2bee0a83474001-60"
+              onChange={(e) => {
+                console.log("e.target.value");
+                setUrlRoundProject(e.target.value);
+              }}
+            ></Input>
+
+            {/* <Text>Please verify: </Text> */}
+            {/* <Text>The exact round address with Lower and Uppercase</Text> */}
+
+            <Text>Paste the url of your project only.</Text>
+            {/* <Text>
+              https://explorer.gitcoin.co/#/round/10/0xc34745b3852df32d5958be88df2bee0a83474001/0xc34745b3852df32d5958be88df2bee0a83474001-60
+            </Text> */}
+            <Button p={{ base: "0.5em" }} onClick={handleUrlGetData}>
+              Check url grant
+            </Button>
+          </Box>
+
+          <Box p={{ base: "0.5em" }}>
+            <Text fontFamily={"PressStart2P"} textAlign={{ base: "center" }}>
+              OR:
+            </Text>
+          </Box>
+
           <Box textAlign={"left"} boxShadow={"xl"} borderRadius="lg">
             <Box display={"flex"} gap="1em">
               <Box>
@@ -306,30 +366,7 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             <Button onClick={handleGetData}>Get donors</Button>
           </Box>
 
-          <Box p={{ base: "0.5em" }}>
-            <Text fontFamily={"PressStart2P"} textAlign={{ base: "center" }}>
-              OR:
-            </Text>
-          </Box>
 
-          <Box borderRadius="lg" boxShadow={"xl"} gap="1em">
-            <Text>Add url of your round project:</Text>
-
-            <Input
-              placeholder="https://explorer.gitcoin.co/#/round/10/0xc34745b3852df32d5958be88df2bee0a83474001/0xc34745b3852df32d5958be88df2bee0a83474001-60"
-              onChange={(e) => {
-                console.log("e.target.value");
-                setUrlRoundProject(e.target.value);
-              }}
-            ></Input>
-
-            <Text>Please verify: </Text>
-            <Text>The exact round address with Lower and Uppercase</Text>
-
-            <Button p={{ base: "0.5em" }} onClick={handleUrlGetData}>
-              Check url grant
-            </Button>
-          </Box>
         </Box>
 
         {statsRound && (
@@ -362,6 +399,25 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
           </Card>
         )}
 
+
+        {donorsMemo?.length > 0 &&
+          <Box>
+
+            <Button
+
+              onClick={() => {
+                if (donorsMemo?.length > 0) {
+                  downloadExcel(donors)
+                }
+              }}>
+              Export data
+
+            </Button>
+
+          </Box>
+
+        }
+
         <Text textAlign={"left"}>
           Contributors: {statsRound?.totalContributors}
         </Text>
@@ -371,14 +427,14 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             <Thead>
               <Tr>
                 <Th>Address</Th>
-                <Th>Total USD</Th>
+                <Th onClick={() => handleOrderSort()}>Total USD {orderSort == "ASC" ? <BiDownArrow></BiDownArrow> : <BiUpArrow></BiUpArrow>}</Th>
                 {/* <Th isNumeric>multiply by</Th> */}
               </Tr>
             </Thead>
             <Tbody>
-              {donors &&
-                donors?.length > 0 &&
-                donors.map((d, i) => {
+              {donorsMemo &&
+                donorsMemo?.length > 0 &&
+                donorsMemo.map((d, i) => {
                   return (
                     <Tr key={i}>
                       <Td>{d?.id}</Td>
