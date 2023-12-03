@@ -12,6 +12,7 @@ export interface Donors {
   id?:string;
   amountUSD?:number;
   votes?:number;
+  ensName?:string;
   // chaindId?:string;
   // totalDonors?:number;
   // totalReceived?:number;

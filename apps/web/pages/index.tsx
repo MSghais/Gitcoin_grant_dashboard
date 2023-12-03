@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import HeaderSEO from "../components/HeaderSEO";
-import { useAccount, useNetwork, usePublicClient } from "wagmi";
+import { useAccount, useEnsAddress, useEnsName, useNetwork, usePublicClient } from "wagmi";
 import { providers } from "ethers";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
@@ -73,6 +73,11 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
         totalUSD += d?.amountUSD;
         votes += d?.votes;
       });
+
+      if (orderSort == "ASC") {
+        const orderDonors = donors?.sort((a, b) => b?.amountUSD < a?.amountUSD ? -1 : 1)
+        setDonors(orderDonors)
+      }
 
       setStatsRound({
         totalUSD: totalUSD,
@@ -224,26 +229,43 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
   };
 
   const handleOrderSort = () => {
-    if (orderSort == "ASC") {
+
+
+    const sortByAsc = () => {
       setOrderSort("ASC")
       const orderDonors = donors?.sort((a, b) => b?.amountUSD < a?.amountUSD ? -1 : 1)
       // a[prop] < b[prop] ? -1 : 1
       console.log('ordersDonors', orderDonors)
       setDonors(orderDonors)
-    } else {
+    }
+    const sortByDesc = () => {
       const orderDonors = donors?.sort((a, b) => b?.amountUSD > a?.amountUSD ? -1 : 1)
       console.log('ordersDonors', orderDonors)
       setDonors(orderDonors)
       setOrderSort("DESC")
     }
+
+    let orderSortAmount = orderSort
+    if (orderSort == "ASC") {
+      sortByDesc()
+
+    } else {
+      sortByAsc()
+
+    }
   }
+
+  // const getEnsName = (address: string) => {
+  //   let ensName = useEnsName({ address: address as `0x${string}` })
+  //   return ensName?.data
+  // }
 
   const donorsMemo = useMemo(() => {
 
     return donors
   }, [donors, orderSort])
 
-  useEffect(() => console.log("re-render because x changed:",), [donors])
+  // useEffect(() => console.log("re-render because x changed:",), [donors])
 
   console.log("donorsMemo", donorsMemo)
   return (
@@ -427,19 +449,21 @@ const Home: NextPage<MyPageProps> = ({ grants }) => {
             <Thead>
               <Tr>
                 <Th>Address</Th>
-                <Th onClick={() => handleOrderSort()}>Total USD {orderSort == "ASC" ? <BiDownArrow></BiDownArrow> : <BiUpArrow></BiUpArrow>}</Th>
-                {/* <Th isNumeric>multiply by</Th> */}
+                <Th onClick={() => handleOrderSort()}>Total USD {orderSort == "ASC" ? <BiUpArrow></BiUpArrow> : <BiUpArrow></BiUpArrow>}</Th>
+                <Th >ENS Name</Th>
               </Tr>
             </Thead>
             <Tbody>
               {donorsMemo &&
                 donorsMemo?.length > 0 &&
                 donorsMemo.map((d, i) => {
+                  // let ensName=getEnsName(d?.id)
+                  // console.log("ensName", ensName)
                   return (
                     <Tr key={i}>
                       <Td>{d?.id}</Td>
                       <Td>{d?.amountUSD}</Td>
-                      {/* <Td isNumeric>25.4</Td> */}
+                
                     </Tr>
                   );
                 })}
